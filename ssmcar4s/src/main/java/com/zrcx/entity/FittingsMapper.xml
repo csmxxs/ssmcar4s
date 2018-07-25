@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FittingsMapper">
+	
+	<resultMap id="rsFittings" type="Fittings">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="brand" column="BRAND" />
+		<result property="unit" column="UNIT" />
+		<result property="price" column="PRICE" />
+		<result property="type" column="TYPE" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		ID, 
+		NAME, 
+		BRAND, 
+		UNIT, 
+		PRICE, 
+		TYPE, 
+		CREATE_DATE, 
+		DEL_FLAG, 
+		REMARK
+	</sql>
+	
+	
+	<select id="findById" resultMap="rsFittings" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from T_4s_fittings
+		<where>
+			ID = #{id}
+		</where>
+	</select>
+	
+	
+	<select id="findList" resultMap="rsFittings">
+		select  <include refid="sql_column_items"/> from T_4s_fittings
+		<where>
+			<if test="Fittings != null and Fittings.id != null ">  
+				and ID = #{Fittings.id}
+			</if>
+			<if test="Fittings != null and Fittings.name != null and Fittings.name != '' ">  
+				and NAME = #{Fittings.name}
+			</if>
+			<if test="Fittings != null and Fittings.brand != null and Fittings.brand != '' ">  
+				and BRAND = #{Fittings.brand}
+			</if>
+			<if test="Fittings != null and Fittings.unit != null and Fittings.unit != 0">  
+				and UNIT = #{Fittings.unit}
+			</if>
+			<if test="Fittings != null and Fittings.price != null ">  
+				and PRICE = #{Fittings.price}
+			</if>
+			<if test="Fittings != null and Fittings.type != null and Fittings.type != '' ">  
+				and TYPE = #{Fittings.type}
+			</if>
+			<if test="createDateBegin != null" >
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]> 
+			</if>
+			<if test="createDateEnd != null" > 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]> 
+			</if>
+			<if test="Fittings != null and Fittings.delFlag != null and Fittings.delFlag!=0">  
+				and DEL_FLAG = #{Fittings.delFlag}
+			</if>
+			<if test="Fittings != null and Fittings.remark != null and Fittings.remark != '' ">  
+				and REMARK = #{Fittings.remark}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="Fittings">
+		insert into T_4s_fittings 
+			(
+			ID, 
+			NAME, 
+			BRAND, 
+			UNIT, 
+			PRICE, 
+			TYPE, 
+			CREATE_DATE, 
+			DEL_FLAG, 
+			REMARK
+			) 
+		values
+			(
+			seq_t_4s_Fittings.nextval, 
+			#{name, jdbcType=VARCHAR}, 
+			#{brand, jdbcType=VARCHAR}, 
+			#{unit, jdbcType=NUMERIC}, 
+			#{price, jdbcType=NUMERIC}, 
+			#{type, jdbcType=VARCHAR}, 
+			sysdate, 
+			#{delFlag, jdbcType=NUMERIC}, 
+			#{remark, jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<update id="update" parameterType="Fittings">
+		update T_4s_fittings
+			 <set> 
+				<if test=" name != null ">NAME = #{name, jdbcType=VARCHAR}, </if>
+				<if test=" brand != null ">BRAND = #{brand, jdbcType=VARCHAR}, </if>
+				<if test=" unit != null ">UNIT = #{unit, jdbcType=NUMERIC}, </if>
+				<if test=" price != null ">PRICE = #{price, jdbcType=NUMERIC}, </if>
+				<if test=" type != null ">TYPE = #{type, jdbcType=VARCHAR}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+				<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4s_fittings
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="D:/java/tomcat9jar/ecj-4.7.3a.jar"/>
+	<classpathentry kind="lib" path="D:/java/tomcat9jar/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="D:/java/tomcat9jar/wsdl4j-1.6.2.jar"/>
+	<classpathentry kind="lib" path="D:/java/tomcat9jar/ant.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

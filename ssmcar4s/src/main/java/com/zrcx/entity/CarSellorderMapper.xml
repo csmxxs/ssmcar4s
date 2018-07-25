@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CarSellorderMapper">
+	
+	<resultMap id="rsCarSellorder" type="CarSellorder">
+		<result property="id" column="ID" />
+		<result property="carId" column="CAR_ID" />
+		<result property="customerId" column="CUSTOMER_ID" />
+		<result property="salesman" column="SALESMAN" />
+		<result property="sellPrice" column="SELL_PRICE" />
+		<result property="count" column="COUNT" />
+		<result property="total" column="TOTAL" />
+		<result property="sellDate" column="SELL_DATE" />
+		<result property="outDate" column="OUT_DATE" />
+		<result property="outState" column="OUT_STATE" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		A.ID, 
+		A.CAR_ID, 
+		A.CUSTOMER_ID, 
+		A.SALESMAN, 
+		A.SELL_PRICE, 
+		A.COUNT, 
+		A.TOTAL, 
+		A.SELL_DATE, 
+		A.OUT_DATE, 
+		A.OUT_STATE, 
+		A.REMARK
+	</sql>
+	<select id="findById" resultMap="rsCarSellorder" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from T_4S_CAR_SELLORDER A
+		<where>
+			 A.ID=#{id}
+		</where>
+	</select>
+	
+	<select id="findList" resultMap="rsCarSellorder">
+		select  <include refid="sql_column_items"/>,b.brand carName,b.series carSeries,c.name customerName from T_4S_CAR_SELLORDER A,t_4s_car b,t_4s_customer c
+		<where>
+		    a.car_id=b.id and a.customer_id=c.id and b.del_flag=1 and c.del_flag=1
+		    <if test="CarSellorder.carSeries!=null and CarSellorder.carSeries !='' ">
+			  and b.series = #{CarSellorder.carSeries}
+			</if>
+			<if test="CarSellorder.carName !=null and CarSellorder.carName !='' ">
+			  and b.brand = #{CarSellorder.carName}
+			</if>
+			<if test="CarSellorder.customerName !=null and CarSellorder.customerName !='' ">
+			  and c.name = #{CarSellorder.customerName}
+			</if>
+			<if test="CarSellorder != null and CarSellorder.id != null ">  
+				and A.ID = #{CarSellorder.id}
+			</if>
+			<if test="CarSellorder != null and CarSellorder.carId != null ">  
+				and A.CAR_ID = #{CarSellorder.carId}
+			</if>
+			<if test="CarSellorder != null and CarSellorder.customerId != null ">  
+				and A.CUSTOMER_ID = #{CarSellorder.customerId}
+			</if>
+			<if test="CarSellorder != null and CarSellorder.salesman != null and CarSellorder.salesman != '' ">  
+				and A.SALESMAN = #{CarSellorder.salesman}
+			</if>
+			<if test="CarSellorder != null and CarSellorder.sellPrice != null ">  
+				and A.SELL_PRICE = #{CarSellorder.sellPrice}
+			</if>
+			<if test="CarSellorder != null and CarSellorder.count != null ">  
+				and A.COUNT = #{CarSellorder.count}
+			</if>
+			<if test="CarSellorder != null and CarSellorder.total != null ">  
+				and A.TOTAL = #{CarSellorder.total}
+			</if>
+			<if test="sellDateBegin != null" >
+				<![CDATA[
+				and A.SELL_DATE >= #{sellDateBegin} 
+				]]> 
+			</if>
+			<if test="sellDateEnd != null" > 
+				<![CDATA[
+				and A.SELL_DATE <= #{sellDateEnd}
+				]]> 
+			</if>
+			<if test="outDateBegin != null" >
+				<![CDATA[
+				and A.OUT_DATE >= #{outDateBegin} 
+				]]> 
+			</if>
+			<if test="outDateEnd != null" > 
+				<![CDATA[
+				and A.OUT_DATE <= #{outDateEnd}
+				]]> 
+			</if>
+			<if test="CarSellorder != null and CarSellorder.outState != null and CarSellorder.outState != 0 ">  
+				and A.OUT_STATE = #{CarSellorder.outState}
+			</if>
+			<if test="CarSellorder != null and CarSellorder.remark != null and CarSellorder.remark != '' ">  
+				and A.REMARK = #{CarSellorder.remark}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="CarSellorder">
+		insert into T_4S_CAR_SELLORDER 
+			(
+			ID, 
+			CAR_ID, 
+			CUSTOMER_ID, 
+			SALESMAN, 
+			SELL_PRICE, 
+			COUNT, 
+			TOTAL, 
+			SELL_DATE, 
+			OUT_DATE, 
+			OUT_STATE, 
+			REMARK
+			) 
+		values
+			(
+			SEQ_T_4S_CARSELLORDER.nextval, 
+			#{carId, jdbcType=NUMERIC}, 
+			#{customerId, jdbcType=NUMERIC}, 
+			#{salesman, jdbcType=VARCHAR}, 
+			#{sellPrice, jdbcType=NUMERIC}, 
+			#{count, jdbcType=NUMERIC}, 
+			#{total, jdbcType=NUMERIC}, 
+			sysdate, 
+			#{outDate, jdbcType=TIMESTAMP}, 
+			1, 
+			#{remark, jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<update id="update" parameterType="CarSellorder">
+		update T_4S_CAR_SELLORDER
+			 <set> 
+				<if test=" carId != null ">CAR_ID = #{carId, jdbcType=NUMERIC}, </if>
+				<if test=" customerId != null ">CUSTOMER_ID = #{customerId, jdbcType=NUMERIC}, </if>
+				<if test=" salesman != null ">SALESMAN = #{salesman, jdbcType=VARCHAR}, </if>
+				<if test=" sellPrice != null ">SELL_PRICE = #{sellPrice, jdbcType=NUMERIC}, </if>
+				<if test=" count != null ">COUNT = #{count, jdbcType=NUMERIC}, </if>
+				<if test=" total != null ">TOTAL = #{total, jdbcType=NUMERIC}, </if>
+				<if test=" sellDate != null ">SELL_DATE = #{sellDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" outDate != null ">OUT_DATE = #{outDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" outState != null ">OUT_STATE = #{outState, jdbcType=NUMERIC}, </if>
+				<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4S_CAR_SELLORDER
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

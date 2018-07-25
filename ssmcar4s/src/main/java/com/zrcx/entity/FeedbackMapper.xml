@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FeedbackMapper">
+	
+	<resultMap id="rsFeedback" type="Feedback">
+		<result property="id" column="ID" />
+		<result property="title" column="TITLE" />
+		<result property="info" column="INFO" />
+		<result property="customerId" column="CUSTOMER_ID" />
+		<result property="createDate" column="CREATE_DATE" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		A.ID, 
+		A.TITLE, 
+		A.INFO, 
+		A.CUSTOMER_ID, 
+		A.CREATE_DATE
+	</sql>
+	
+	
+	<select id="findById" resultMap="rsFeedback" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from T_4S_Feedback A
+		<where>
+			A.ID = #{id}
+		</where>
+	</select>
+	
+	
+	<select id="findList" resultMap="rsFeedback">
+		select  <include refid="sql_column_items"/>,b.name customername,b.contact_tel customertel from T_4S_Feedback a,t_4s_customer b 
+		<where>
+		     a.customer_Id=b.id
+			<if test="Feedback != null and Feedback.customername != null and Feedback.customername!=''">  
+				and b.name = #{Feedback.customername}
+			</if>
+			<if test="Feedback != null and Feedback.customertel != null and Feedback.customertel!=''">  
+				and b.contact_tel = #{Feedback.customertel}
+			</if>
+			
+			<if test="Feedback != null and Feedback.title != null and Feedback.title != '' ">  
+				and TITLE = #{Feedback.title}
+			</if>
+			<if test="Feedback != null and Feedback.info != null and Feedback.info != '' ">  
+				and INFO = #{Feedback.info}
+			</if>
+			<if test="createDateBegin != null" >
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]> 
+			</if>
+			<if test="createDateEnd != null" > 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]> 
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="Feedback">
+		insert into T_4S_Feedback 
+			(
+			ID, 
+			TITLE, 
+			INFO, 
+			CUSTOMER_ID, 
+			CREATE_DATE
+			) 
+		values
+			(
+			SEQ_T_4S_Feedback.nextval, 
+			#{title, jdbcType=VARCHAR}, 
+			#{info, jdbcType=VARCHAR}, 
+			#{customerId, jdbcType=NUMERIC}, 
+			sysdate
+			)
+	</insert>
+	
+	<update id="update" parameterType="Feedback">
+		update T_4S_Feedback
+			 <set> 
+				<if test=" title != null ">TITLE = #{title, jdbcType=VARCHAR}, </if>
+				<if test=" info != null ">INFO = #{info, jdbcType=VARCHAR}, </if>
+				<if test=" customerId != null ">CUSTOMER_ID = #{customerId, jdbcType=NUMERIC}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4S_Feedback
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

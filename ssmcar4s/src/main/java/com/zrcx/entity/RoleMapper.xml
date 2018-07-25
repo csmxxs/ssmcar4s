@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="RoleMapper">
+	
+	<resultMap id="rsRole" type="Role">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="delFlag" column="DEL_FLAG" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		ID, 
+		NAME, 
+		CREATE_DATE, 
+		DEL_FLAG
+	</sql>
+	
+	
+	<select id="findById" resultMap="rsRole" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from T_4s_role
+		<where>
+			ID = #{id}
+		</where>
+	</select>
+	
+	
+	<select id="findList" resultMap="rsRole">
+		select  <include refid="sql_column_items"/> from T_4s_role
+		<where>
+			<if test="Role != null and Role.id != null ">  
+				and ID = #{Role.id}
+			</if>
+			<if test="Role != null and Role.name != null and Role.name != '' ">  
+				and NAME = #{Role.name}
+			</if>
+			<if test="createDateBegin != null" >
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]> 
+			</if>
+			<if test="createDateEnd != null" > 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]> 
+			</if>
+			<if test="Role != null and Role.delFlag != null ">  
+				and DEL_FLAG = #{Role.delFlag}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="Role">
+		insert into T_4s_role 
+			(
+			ID, 
+			NAME, 
+			CREATE_DATE, 
+			DEL_FLAG
+			) 
+		values
+			(
+			seq_t_4s_role.nextval, 
+			#{name, jdbcType=VARCHAR}, 
+			sysdate, 
+			#{delFlag, jdbcType=NUMERIC}
+			)
+	</insert>
+	<insert id="addRole2Menu" parameterType="java.util.Map">
+		INSERT INTO T_4S_ROLE2MENU 
+			(ROLE_ID,MENU_ID) 
+		VALUES(#{roleId},#{menuId})
+	</insert>
+	<update id="update" parameterType="Role">
+		update T_4s_role
+			 <set> 
+				<if test=" name != null ">NAME = #{name, jdbcType=VARCHAR}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4s_role
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	<delete id="deleteRole2Menu" parameterType="java.util.Map">
+		DELETE FROM T_4S_ROLE2MENU WHERE ROLE_ID=#{roleId} AND MENU_ID=#{menuId}
+	</delete>
+</mapper>

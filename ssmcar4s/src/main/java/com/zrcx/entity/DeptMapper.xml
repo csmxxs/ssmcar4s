@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DeptMapper">
+	
+	<resultMap id="rsDept" type="Dept">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="charger" column="CHARGER" />
+		<result property="contactTel" column="CONTACT_TEL" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="delFlag" column="DEL_FLAG" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		ID, 
+		NAME, 
+		CHARGER, 
+		CONTACT_TEL, 
+		CREATE_DATE, 
+		DEL_FLAG
+	</sql>
+	
+	
+	<select id="findById" resultMap="rsDept" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from T_4S_DEPT
+		<where>
+			ID = #{id}
+		</where>
+	</select>
+	
+	
+	<select id="findList" resultMap="rsDept">
+		select  <include refid="sql_column_items"/> from T_4S_DEPT
+		<where>
+			<if test="Dept != null and Dept.id != null ">  
+				and ID = #{Dept.id}
+			</if>
+			<if test="Dept != null and Dept.name != null and Dept.name != '' ">  
+				and NAME = #{Dept.name}
+			</if>
+			<if test="Dept != null and Dept.charger != null and Dept.charger != '' ">  
+				and CHARGER = #{Dept.charger}
+			</if>
+			<if test="Dept != null and Dept.contactTel != null and Dept.contactTel != '' ">  
+				and CONTACT_TEL = #{Dept.contactTel}
+			</if>
+			<if test="createDateBegin != null" >
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]> 
+			</if>
+			<if test="createDateEnd != null" > 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]> 
+			</if>
+			<if test="Dept != null and Dept.delFlag != null ">  
+				and DEL_FLAG = #{Dept.delFlag}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="Dept">
+		insert into T_4S_DEPT 
+			(
+			ID, 
+			NAME, 
+			CHARGER, 
+			CONTACT_TEL, 
+			CREATE_DATE, 
+			DEL_FLAG
+			) 
+		values
+			(
+			SEQ_T_4S_DEPT.nextval, 
+			#{name, jdbcType=VARCHAR}, 
+			#{charger, jdbcType=VARCHAR}, 
+			#{contactTel, jdbcType=VARCHAR}, 
+			sysdate, 
+			#{delFlag, jdbcType=NUMERIC}
+			)
+	</insert>
+	
+	<update id="update" parameterType="Dept">
+		update T_4S_DEPT
+			 <set> 
+				<if test=" name != null ">NAME = #{name, jdbcType=VARCHAR}, </if>
+				<if test=" charger != null ">CHARGER = #{charger, jdbcType=VARCHAR}, </if>
+				<if test=" contactTel != null ">CONTACT_TEL = #{contactTel, jdbcType=VARCHAR}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4S_DEPT
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

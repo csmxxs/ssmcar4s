@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DictMapper">
+	
+	<resultMap id="rsDict" type="Dict">
+		<result property="id" column="ID" />
+		<result property="dictName" column="DICT_NAME" />
+		<result property="key" column="KEY" />
+		<result property="value" column="VALUE" />
+		<result property="useFlag" column="USE_FLAG" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="orderNo" column="ORDER_NO" />
+		<result property="delFlag" column="DEL_FLAG" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		ID, 
+		DICT_NAME, 
+		KEY, 
+		VALUE, 
+		USE_FLAG, 
+		CREATE_DATE, 
+		ORDER_NO, 
+		DEL_FLAG
+	</sql>
+	
+	
+	<select id="findById" resultMap="rsDict" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from t_4s_dict
+		<where>
+			ID = #{id}
+		</where>
+	</select>
+	
+	
+	<select id="findList" resultMap="rsDict">
+		select  <include refid="sql_column_items"/> from t_4s_dict
+		<where>
+			<if test="Dict != null and Dict.id != null ">  
+				and ID = #{Dict.id}
+			</if>
+			<if test="Dict != null and Dict.dictName != null and Dict.dictName != '' ">  
+				and DICT_NAME = #{Dict.dictName}
+			</if>
+			<if test="Dict != null and Dict.key != null and Dict.key != '' ">  
+				and KEY = #{Dict.key}
+			</if>
+			<if test="Dict != null and Dict.value != null and Dict.value != '' ">  
+				and VALUE = #{Dict.value}
+			</if>
+			<if test="Dict != null and Dict.useFlag != null and Dict.useFlag!=0 ">  
+				and USE_FLAG = #{Dict.useFlag}
+			</if>
+			<if test="createDateBegin != null" >
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]> 
+			</if>
+			<if test="createDateEnd != null" > 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]> 
+			</if>
+			<if test="Dict != null and Dict.orderNo != null ">  
+				and ORDER_NO = #{Dict.orderNo}
+			</if>
+			<if test="Dict != null and Dict.delFlag != null ">  
+				and DEL_FLAG = #{Dict.delFlag}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="Dict">
+		insert into t_4s_dict 
+			(
+			ID, 
+			DICT_NAME, 
+			KEY, 
+			VALUE, 
+			USE_FLAG, 
+			CREATE_DATE, 
+			ORDER_NO, 
+			DEL_FLAG
+			) 
+		values
+			(
+			seq_t_4s_dict.nextval, 
+			#{dictName, jdbcType=VARCHAR}, 
+			#{key, jdbcType=VARCHAR}, 
+			#{value, jdbcType=VARCHAR}, 
+			#{useFlag, jdbcType=NUMERIC}, 
+			sysdate, 
+			#{orderNo, jdbcType=NUMERIC}, 
+			#{delFlag, jdbcType=NUMERIC}
+			)
+	</insert>
+	
+	<update id="update" parameterType="Dict">
+		update t_4s_dict
+			 <set> 
+				<if test=" dictName != null ">DICT_NAME = #{dictName, jdbcType=VARCHAR}, </if>
+				<if test=" key != null ">KEY = #{key, jdbcType=VARCHAR}, </if>
+				<if test=" value != null ">VALUE = #{value, jdbcType=VARCHAR}, </if>
+				<if test=" useFlag != null ">USE_FLAG = #{useFlag, jdbcType=NUMERIC}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" orderNo != null ">ORDER_NO = #{orderNo, jdbcType=NUMERIC}, </if>
+				<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from t_4s_dict
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

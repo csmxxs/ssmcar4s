@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MenuMapper">
+
+	<resultMap id="rsMenu" type="Menu">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="url" column="URL" />
+		<result property="parentId" column="PARENT_ID" />
+		<result property="menuLevel" column="MENU_LEVEL" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="useFlag" column="USE_FLAG" />
+		<result property="delFlag" column="DEL_FLAG" />
+	</resultMap>
+
+	<sql id="sql_column_items">
+		A.ID,
+		A.NAME,
+		A.URL,
+		A.PARENT_ID,
+		A.MENU_LEVEL,
+		A.CREATE_DATE,
+		A.USE_FLAG,
+		A.DEL_FLAG
+	</sql>
+
+	<select id="findById" resultMap="rsMenu" parameterType="java.lang.Long">
+		select
+		<include refid="sql_column_items" />
+		from T_4s_menu a
+		<where>
+			ID = #{id}
+		</where>
+	</select>
+
+
+	<select id="findList" resultMap="rsMenu">
+		select
+		<include refid="sql_column_items" />
+		from T_4s_menu a
+		<where>
+			<if test="Menu != null and Menu.id != null ">
+				and ID = #{Menu.id}
+			</if>
+			<if test="Menu != null and Menu.name != null and Menu.name != '' ">
+				and NAME = #{Menu.name}
+			</if>
+			<if test="Menu != null and Menu.url != null and Menu.url != '' ">
+				and URL = #{Menu.url}
+			</if>
+			<if test="Menu != null and Menu.parentId != null and Menu.parentId!=0">
+				and PARENT_ID = #{Menu.parentId}
+			</if>
+			<if test="Menu != null and Menu.menuLevel != null and Menu.menuLevel!=0">
+				and MENU_LEVEL = #{Menu.menuLevel}
+			</if>
+			<if test="createDateBegin != null">
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]>
+			</if>
+			<if test="createDateEnd != null"> 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]>
+			</if>
+			<if test="Menu != null and Menu.useFlag != null and Menu.useFlag!=0">
+				and USE_FLAG = #{Menu.useFlag}
+			</if>
+			<if test="Menu != null and Menu.delFlag != null and Menu.delFlag!=0">
+				and DEL_FLAG = #{Menu.delFlag}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">
+			order by ${order} ${sort}
+		</if>
+	</select>
+
+	<insert id="add" parameterType="Menu">
+		insert into T_4s_menu
+		(
+		ID,
+		NAME,
+		URL,
+		PARENT_ID,
+		MENU_LEVEL,
+		CREATE_DATE,
+		USE_FLAG,
+		DEL_FLAG
+		)
+		values
+		(
+		seq_t_4s_menu.nextval,
+		#{name, jdbcType=VARCHAR},
+		#{url, jdbcType=VARCHAR},
+		#{parentId, jdbcType=NUMERIC},
+		#{menuLevel, jdbcType=NUMERIC},
+		sysdate,
+		#{useFlag, jdbcType=NUMERIC},
+		#{delFlag, jdbcType=NUMERIC}
+		)
+	</insert>
+
+	<update id="update" parameterType="Menu">
+		update T_4s_menu
+		<set>
+			<if test=" name != null ">NAME = #{name, jdbcType=VARCHAR}, </if>
+			<if test=" url != null ">URL = #{url, jdbcType=VARCHAR}, </if>
+			<if test=" parentId != null ">PARENT_ID = #{parentId, jdbcType=NUMERIC}, </if>
+			<if test=" menuLevel != null ">MENU_LEVEL = #{menuLevel, jdbcType=NUMERIC}, </if>
+			<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+			<if test=" useFlag != null ">USE_FLAG = #{useFlag, jdbcType=NUMERIC}, </if>
+			<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+			ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4s_menu
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	<select id="getMenusByRoleId" resultMap="rsMenu" parameterType="java.lang.Long">
+		select
+		<include refid="sql_column_items" />
+		FROM T_4S_MENU A,T_4S_ROLE2MENU B
+		<where>
+			A.ID = B.MENU_ID AND B.ROLE_ID = #{id}
+		</where>
+	</select>
+</mapper>

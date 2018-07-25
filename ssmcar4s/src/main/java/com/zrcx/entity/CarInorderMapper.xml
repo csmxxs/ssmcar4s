@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CarInorderMapper">
+	
+	<resultMap id="rsCarInorder" type="CarInorder">
+		<result property="id" column="ID" />
+		<result property="supplierId" column="SUPPLIER_ID" />
+		<result property="inPrice" column="IN_PRICE" />
+		<result property="count" column="COUNT" />
+		<result property="total" column="TOTAL" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="inDate" column="IN_DATE" />
+		<result property="inState" column="IN_STATE" />
+		<result property="remark" column="REMARK" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<result property="carId" column="CAR_ID" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		A.ID, 
+		A.SUPPLIER_ID, 
+		A.IN_PRICE, 
+		A.COUNT, 
+		A.TOTAL, 
+		A.CREATE_DATE, 
+		A.IN_DATE, 
+		A.IN_STATE, 
+		A.REMARK, 
+		A.DEL_FLAG, 
+		A.CAR_ID
+	</sql>
+	<select id="findById" resultMap="rsCarInorder" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from t_4s_car_inorder A
+		<where>
+			A.ID = #{id}
+		</where>
+	</select>
+	
+	<select id="findList" resultMap="rsCarInorder">
+		select  <include refid="sql_column_items"/>,b.brand carName,b.series carSeries,c.name supplierName from t_4s_car_inorder a,t_4s_car b,t_4s_supplier c
+		<where>
+		    a.car_id=b.id and a.supplier_id=c.id and a.del_flag=1 and b.del_flag=1 and c.del_flag=1
+			<if test="CarInorder.carName != null and CarInorder.carName!= ''">  
+				and b.brand = #{CarInorder.carName}
+			</if>
+			<if test="CarInorder.supplierId != null and CarInorder.supplierId != '' and CarInorder.supplierId != 0 ">  
+				and a.supplier_id = #{CarInorder.supplierId}
+			</if>
+			<if test="CarInorder.carSeries != null and CarInorder.carSeries != '' ">  
+				and b.series = #{CarInorder.carSeries}
+			</if>
+			<if test="CarInorder != null and CarInorder.inState != null and CarInorder.inState != 0 ">  
+				and a.in_state = #{CarInorder.inState}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="CarInorder">
+		insert into T_4S_CAR_INORDER 
+			(
+			ID, 
+			SUPPLIER_ID, 
+			IN_PRICE, 
+			COUNT, 
+			TOTAL, 
+			CREATE_DATE, 
+			IN_DATE, 
+			IN_STATE, 
+			REMARK, 
+			DEL_FLAG, 
+			CAR_ID
+			) 
+		values
+			(
+			SEQ_T_4S_CARINORDER.nextval, 
+			#{supplierId, jdbcType=NUMERIC}, 
+			#{inPrice, jdbcType=NUMERIC}, 
+			#{count, jdbcType=NUMERIC}, 
+			#{total, jdbcType=NUMERIC}, 
+			sysdate, 
+			#{inDate, jdbcType=TIMESTAMP}, 
+			1, 
+			#{remark, jdbcType=VARCHAR}, 
+			1, 
+			#{carId, jdbcType=NUMERIC}
+			)
+	</insert>
+	
+	<update id="update" parameterType="CarInorder">
+		update T_4S_CAR_INORDER
+			 <set> 
+				<if test=" supplierId != null ">SUPPLIER_ID = #{supplierId, jdbcType=NUMERIC}, </if>
+				<if test=" inPrice != null ">IN_PRICE = #{inPrice, jdbcType=NUMERIC}, </if>
+				<if test=" count != null ">COUNT = #{count, jdbcType=NUMERIC}, </if>
+				<if test=" total != null ">TOTAL = #{total, jdbcType=NUMERIC}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" inDate != null ">IN_DATE = #{inDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" inState != null ">IN_STATE = #{inState, jdbcType=NUMERIC}, </if>
+				<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+				<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+				<if test=" carId != null ">CAR_ID = #{carId, jdbcType=NUMERIC}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4S_CAR_INORDER
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

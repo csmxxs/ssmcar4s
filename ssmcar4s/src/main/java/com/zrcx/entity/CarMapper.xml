@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CarMapper">
+
+	<resultMap id="rsCar" type="Car">
+		<result property="id" column="ID" />
+		<result property="brand" column="BRAND" />
+		<result property="series" column="SERIES" />
+		<result property="type" column="TYPE" />
+		<result property="volume" column="VOLUME" />
+		<result property="color" column="COLOR" />
+		<result property="proPlace" column="PRO_PLACE" />
+		<result property="price" column="PRICE" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<result property="remark" column="REMARK" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="filePath" column="FILE_PATH" />
+		<result property="supplierId" column="SUPPLIER_ID" />
+	</resultMap>
+	<sql id="sql_column_items">
+		ID,
+		BRAND,
+		SERIES,
+		TYPE,
+		VOLUME,
+		COLOR,
+		PRO_PLACE,
+		PRICE,
+		DEL_FLAG,
+		REMARK,
+		CREATE_DATE,
+		FILE_PATH,
+		SUPPLIER_ID
+	</sql>
+	<select id="findById" resultMap="rsCar" parameterType="long">
+		select
+		<include refid="sql_column_items" />
+		from t_4s_car
+		<where>
+			ID = #{id}  
+		</where>
+	</select>
+
+
+	<select id="findList" resultMap="rsCar" parameterType="java.util.Map">
+		select
+		<include refid="sql_column_items" />
+		from t_4s_car
+		<where>
+		    AND DEL_FLAG = 1
+			<if test="Car != null and Car.id != null ">
+				and ID = #{Car.id}
+			</if>
+			<if test="Car != null and Car.series != null and Car.series!='' ">
+				and SERIES = #{Car.series}
+			</if>
+			<if test="Car != null and Car.brand != null and Car.brand != '' ">
+				and BRAND = #{Car.brand}
+			</if>
+			<if test="Car != null and Car.volume!= null and Car.volume!= '' ">
+				and VOLUME= #{Car.volume}
+			</if>
+			<if test="Car != null and Car.type!= null and Car.type!=0">
+				and TYPE= #{Car.type}
+			</if>
+			<if test="createDateBegin != null">
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]>
+			</if>
+			<if test="createDateEnd != null"> 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]>
+			</if>
+		</where>
+		<if test="order != null and order != '' ">
+			order by ${order} ${sort}
+		</if>
+	</select>
+
+	<insert id="add" parameterType="Car">
+		insert into t_4s_car
+		(
+		ID,
+		BRAND,
+		SERIES,
+		TYPE,
+		VOLUME,
+		COLOR,
+		PRO_PLACE,
+		PRICE,
+		DEL_FLAG,
+		REMARK,
+		CREATE_DATE,
+		FILE_PATH,
+		SUPPLIER_ID 
+		)
+		values
+		(
+		seq_t_4s_car.nextval,
+		#{brand, jdbcType=VARCHAR},
+		#{series, jdbcType=VARCHAR},
+		#{type, jdbcType=NUMERIC},
+		#{volume, jdbcType=VARCHAR},
+		#{color, jdbcType=VARCHAR},
+		#{proPlace, jdbcType=NUMERIC},
+		#{price, jdbcType=NUMERIC},
+		1,
+		#{remark, jdbcType=VARCHAR},
+		sysdate,
+		#{filePath, jdbcType=VARCHAR},
+		#{supplierId, jdbcType=NUMERIC}
+		)
+	</insert>
+
+	<update id="update" parameterType="Car">
+		update t_4s_car
+		<set>
+			<if test=" brand != null ">BRAND = #{brand, jdbcType=VARCHAR}, </if>
+			<if test=" series != null ">SERIES = #{series, jdbcType=VARCHAR}, </if>
+			<if test=" type != null ">TYPE = #{type, jdbcType=NUMERIC}, </if>
+			<if test=" volume != null ">VOLUME = #{volume, jdbcType=VARCHAR}, </if>
+			<if test=" color != null ">COLOR = #{color, jdbcType=VARCHAR}, </if>
+			<if test=" proPlace != null ">PRO_PLACE = #{proPlace, jdbcType=VARCHAR}, </if>
+			<if test=" price != null ">PRICE = #{price, jdbcType=NUMERIC}, </if>
+			<if test=" delFlag !=null ">DEL_FLAG= #{delFlag, jdbcType=NUMERIC}, </if>
+			<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+			<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+			<if test=" filePath != null ">FILE_PATH = #{filePath, jdbcType=VARCHAR}, </if>
+			<if test=" supplierId != null ">SUPPLIER_ID = #{supplierId, jdbcType=NUMERIC}, </if>
+			ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+
+	<delete id="deleteById" parameterType="long">
+		delete from t_4s_car
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+
+</mapper>

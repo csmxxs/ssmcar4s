@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FittingsSellorderMapper">
+	
+	<resultMap id="rsFittingsSellorder" type="FittingsSellorder">
+		<result property="id" column="ID" />
+		<result property="fittingsId" column="FITTINGS_ID" />
+		<result property="customerId" column="CUSTOMER_ID" />
+		<result property="salesman" column="SALESMAN" />
+		<result property="sellPrice" column="SELL_PRICE" />
+		<result property="count" column="COUNT" />
+		<result property="total" column="TOTAL" />
+		<result property="sellDate" column="SELL_DATE" />
+		<result property="outDate" column="OUT_DATE" />
+		<result property="outState" column="OUT_STATE" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		A.ID, 
+		A.FITTINGS_ID, 
+		A.CUSTOMER_ID, 
+		A.SALESMAN, 
+		A.SELL_PRICE, 
+		A.COUNT, 
+		A.TOTAL, 
+		A.SELL_DATE, 
+		A.OUT_DATE, 
+		A.OUT_STATE, 
+		A.REMARK
+	</sql>
+	
+	<select id="findById" resultMap="rsFittingsSellorder" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from t_4s_fittings_sellorder A
+		<where>
+			A.ID = #{id}
+		</where>
+	</select>
+	
+	
+	<select id="findList" resultMap="rsFittingsSellorder">
+		select  <include refid="sql_column_items"/>,b.name fittingsname,b.brand fittingsbrand,c.name customername from t_4s_fittings_sellorder A,t_4s_fittings b,t_4s_customer c
+		<where>
+		    A.FITTINGS_ID=B.ID AND A.CUSTOMER_ID=C.ID AND B.DEL_FLAG=1 AND C.DEL_FLAG=1
+		    <if test="FittingsSellorder != null and FittingsSellorder.fittingsname != null and FittingsSellorder.fittingsname !='' ">  
+				and b.name = #{FittingsSellorder.fittingsname}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.fittingsbrand != null and FittingsSellorder.fittingsbrand !='' ">  
+				and b.brand = #{FittingsSellorder.fittingsbrand}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.customername != null and FittingsSellorder.customername !='' ">  
+				and c.name = #{FittingsSellorder.customername}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.id != null ">  
+				and A.ID = #{FittingsSellorder.id}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.fittingsId != null ">  
+				and A.FITTINGS_ID = #{FittingsSellorder.fittingsId}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.customerId != null ">  
+				and A.CUSTOMER_ID = #{FittingsSellorder.customerId}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.salesman != null and FittingsSellorder.salesman != '' ">  
+				and A.SALESMAN = #{FittingsSellorder.salesman}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.sellPrice != null ">  
+				and A.SELL_PRICE = #{FittingsSellorder.sellPrice}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.count != null ">  
+				and A.COUNT = #{FittingsSellorder.count}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.total != null ">  
+				and A.TOTAL = #{FittingsSellorder.total}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.outState != null and FittingsSellorder.outState !=0 ">  
+				and A.OUT_STATE = #{FittingsSellorder.outState}
+			</if>
+			<if test="FittingsSellorder != null and FittingsSellorder.remark != null and FittingsSellorder.remark != '' ">  
+				and A.REMARK = #{FittingsSellorder.remark}
+			</if>
+			<if test="outDateBegin != null">
+				<![CDATA[
+				and A.OUT_DATE >= #{outDateBegin} 
+				]]>
+			</if>
+			<if test="outDateEnd != null"> 
+				<![CDATA[
+				and A.OUT_DATE <= #{outDateEnd}
+				]]>
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="FittingsSellorder">
+		insert into T_4S_FITTINGS_SELLORDER 
+			(
+			ID, 
+			FITTINGS_ID, 
+			CUSTOMER_ID, 
+			SALESMAN, 
+			SELL_PRICE, 
+			COUNT, 
+			TOTAL, 
+			SELL_DATE, 
+			OUT_DATE, 
+			OUT_STATE, 
+			REMARK
+			) 
+		values
+			(
+			SEQ_T_4S_FITTINGS_SELLORDER.nextval, 
+			#{fittingsId, jdbcType=NUMERIC}, 
+			#{customerId, jdbcType=NUMERIC}, 
+			#{salesman, jdbcType=VARCHAR}, 
+			#{sellPrice, jdbcType=NUMERIC}, 
+			#{count, jdbcType=NUMERIC}, 
+			#{total, jdbcType=NUMERIC}, 
+			sysdate, 
+			#{outDate, jdbcType=TIMESTAMP}, 
+			1, 
+			#{remark, jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<update id="update" parameterType="FittingsSellorder">
+		update T_4S_FITTINGS_SELLORDER
+			 <set> 
+				<if test=" fittingsId != null ">FITTINGS_ID = #{fittingsId, jdbcType=NUMERIC}, </if>
+				<if test=" customerId != null ">CUSTOMER_ID = #{customerId, jdbcType=NUMERIC}, </if>
+				<if test=" salesman != null ">SALESMAN = #{salesman, jdbcType=VARCHAR}, </if>
+				<if test=" sellPrice != null ">SELL_PRICE = #{sellPrice, jdbcType=NUMERIC}, </if>
+				<if test=" count != null ">COUNT = #{count, jdbcType=NUMERIC}, </if>
+				<if test=" total != null ">TOTAL = #{total, jdbcType=NUMERIC}, </if>
+				<if test=" sellDate != null ">SELL_DATE = #{sellDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" outDate != null ">OUT_DATE = #{outDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" outState != null ">OUT_STATE = #{outState, jdbcType=NUMERIC}, </if>
+				<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4S_FITTINGS_SELLORDER
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

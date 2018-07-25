@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="FittingsInorderMapper">
+	<resultMap id="rsFittingsInorder" type="FittingsInorder">
+		<result property="id" column="ID" />
+		<result property="fittingsId" column="FITTINGS_ID" />
+		<result property="supplierId" column="SUPPLIER_ID" />
+		<result property="inPrice" column="IN_PRICE" />
+		<result property="count" column="COUNT" />
+		<result property="total" column="TOTAL" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="inDate" column="IN_DATE" />
+		<result property="inState" column="IN_STATE" />
+		<result property="remark" column="REMARK" />
+		<result property="delFlag" column="DEL_FLAG" />
+	</resultMap>
+	<sql id="sql_column_items">
+		A.ID, 
+		A.FITTINGS_ID, 
+		A.SUPPLIER_ID, 
+		A.IN_PRICE, 
+		A.COUNT, 
+		A.TOTAL, 
+		A.CREATE_DATE, 
+		A.IN_DATE, 
+		A.IN_STATE, 
+		A.REMARK, 
+		A.DEL_FLAG
+	</sql>
+	<select id="findById" resultMap="rsFittingsInorder" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from T_4S_FITTINGS_INORDER A
+		<where>
+			A.ID = #{id}
+		</where>
+	</select>
+	<select id="findList" resultMap="rsFittingsInorder">
+		select  <include refid="sql_column_items"/>,b.name fittingsName,b.brand fittingsbrand,c.name supplierName from t_4s_fittings_inorder a,t_4s_fittings b,t_4s_supplier c
+		<where>
+		    a.fittings_id=b.id and a.supplier_id=c.id and a.del_flag=1 and b.del_flag=1 and c.del_flag=1
+			<if test="FittingsInorder.supplierId !=null and FittingsInorder.supplierId != 0 ">  
+				and a.supplier_id = #{FittingsInorder.supplierId}
+			</if>
+			<if test="FittingsInorder.fittingsbrand != null and FittingsInorder.fittingsbrand != '' ">  
+				and b.brand = #{FittingsInorder.fittingsbrand}
+			</if>
+			<if test="FittingsInorder.fittingsName != null and FittingsInorder.fittingsName != '' ">  
+				and b.name = #{FittingsInorder.fittingsName}
+			</if>
+			<if test="FittingsInorder != null and FittingsInorder.count != null ">  
+				and A.COUNT = #{FittingsInorder.count}
+			</if>
+			<if test="FittingsInorder != null and FittingsInorder.total != null ">  
+				and A.TOTAL = #{FittingsInorder.total}
+			</if>
+			<if test="createDateBegin != null" >
+				<![CDATA[
+				and A.CREATE_DATE >= #{createDateBegin} 
+				]]> 
+			</if>
+			<if test="createDateEnd != null" > 
+				<![CDATA[
+				and A.CREATE_DATE <= #{createDateEnd}
+				]]> 
+			</if>
+			<if test="inDateBegin != null" >
+				<![CDATA[
+				and A.IN_DATE >= #{inDateBegin} 
+				]]> 
+			</if>
+			<if test="inDateEnd != null" > 
+				<![CDATA[
+				and A.IN_DATE <= #{inDateEnd}
+				]]> 
+			</if>
+			<if test="FittingsInorder != null and FittingsInorder.inState != null and  FittingsInorder.inState != 0 ">  
+				and A.IN_STATE = #{FittingsInorder.inState}
+			</if>
+			<if test="FittingsInorder != null and FittingsInorder.remark != null and FittingsInorder.remark != '' ">  
+				and A.REMARK = #{FittingsInorder.remark}
+			</if>
+			<if test="FittingsInorder != null and FittingsInorder.delFlag != null ">  
+				and A.DEL_FLAG = #{FittingsInorder.delFlag}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="FittingsInorder">
+		insert into T_4S_FITTINGS_INORDER 
+			(
+			ID, 
+			FITTINGS_ID, 
+			SUPPLIER_ID, 
+			IN_PRICE, 
+			COUNT, 
+			TOTAL, 
+			CREATE_DATE, 
+			IN_DATE, 
+			IN_STATE, 
+			REMARK, 
+			DEL_FLAG
+			) 
+		values
+			(
+			SEQ_T_4S_FITTINGSINORDER.nextval, 
+			#{fittingsId, jdbcType=NUMERIC}, 
+			#{supplierId, jdbcType=NUMERIC}, 
+			#{inPrice, jdbcType=NUMERIC}, 
+			#{count, jdbcType=NUMERIC}, 
+			#{total, jdbcType=NUMERIC}, 
+			sysdate, 
+			#{inDate, jdbcType=TIMESTAMP}, 
+			1, 
+			#{remark, jdbcType=VARCHAR}, 
+			1
+			)
+	</insert>
+	
+	<update id="update" parameterType="FittingsInorder">
+		update T_4S_FITTINGS_INORDER
+			 <set> 
+				<if test=" fittingsId != null ">FITTINGS_ID = #{fittingsId, jdbcType=NUMERIC}, </if>
+				<if test=" supplierId != null ">SUPPLIER_ID = #{supplierId, jdbcType=NUMERIC}, </if>
+				<if test=" inPrice != null ">IN_PRICE = #{inPrice, jdbcType=NUMERIC}, </if>
+				<if test=" count != null ">COUNT = #{count, jdbcType=NUMERIC}, </if>
+				<if test=" total != null ">TOTAL = #{total, jdbcType=NUMERIC}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" inDate != null ">IN_DATE = #{inDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" inState != null ">IN_STATE = #{inState, jdbcType=NUMERIC}, </if>
+				<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+				<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4S_FITTINGS_INORDER
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

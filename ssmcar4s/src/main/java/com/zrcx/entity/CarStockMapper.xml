@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CarStockMapper">
+	
+	<resultMap id="rsCarStock" type="CarStock">
+		<result property="id" column="ID" />
+		<result property="carId" column="CAR_ID" />
+		<result property="count" column="COUNT" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		A.ID, 
+		A.CAR_ID, 
+		A.COUNT, 
+		A.REMARK
+	</sql>
+	<!-- 根据库存ID查询 -->
+	<select id="findById" resultMap="rsCarStock" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/>,b.brand carName from T_4s_car_stock A,t_4s_car b
+		<where>
+			A.CAR_ID=B.ID AND A.ID =#{ID}
+		</where>
+	</select>
+	<!-- 根据整车的汽车ID查询 -->
+	<select id="findBycarId" resultMap="rsCarStock" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/>  from T_4s_car_stock A
+		<where>
+			A.CAR_ID=#{ID}
+		</where>
+	</select>
+	
+	<select id="findList" resultMap="rsCarStock">
+		select  <include refid="sql_column_items"/>,b.brand carbrand,b.series carseries,b.type cartype,b.volume carvolume,b.color carcolor from T_4s_car_stock A,T_4S_CAR B
+		<where>
+           A.CAR_ID=B.ID AND B.DEL_FLAG=1
+           <if test="CarStock.carbrand !=null and CarStock.carbrand !=''">
+		       and b.brand = #{CarStock.carbrand}
+		   </if>
+           <if test="CarStock.carseries !=null and CarStock.carseries !=''">
+		       and b.series = #{CarStock.carseries}
+		   </if>
+           <if test="CarStock.cartype !=null and CarStock.cartype !='' and CarStock.cartype !=0">
+		       and b.type = #{CarStock.cartype}
+		   </if>
+		</where>
+		
+	</select>
+	
+	<insert id="add" parameterType="CarStock">
+		insert into T_4s_car_stock 
+			(
+			ID, 
+			CAR_ID, 
+			COUNT, 
+			REMARK
+			) 
+		values
+			(
+			seq_t_4s_car_stock.nextval, 
+			#{carId, jdbcType=NUMERIC}, 
+			#{count, jdbcType=NUMERIC}, 
+			#{remark, jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<update id="update" parameterType="CarStock">
+		update T_4s_car_stock
+			 <set> 
+				<if test=" carId != null ">CAR_ID = #{carId, jdbcType=NUMERIC}, </if>
+				<if test=" count != null ">COUNT = #{count, jdbcType=NUMERIC}, </if>
+				<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4s_car_stock
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

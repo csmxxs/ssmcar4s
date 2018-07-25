@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SupplierMapper">
+	
+	<resultMap id="rsSupplier" type="Supplier">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="contacts" column="CONTACTS" />
+		<result property="contactTel" column="CONTACT_TEL" />
+		<result property="bankName" column="BANK_NAME" />
+		<result property="bankAccount" column="BANK_ACCOUNT" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		ID, 
+		NAME, 
+		CONTACTS, 
+		CONTACT_TEL, 
+		BANK_NAME, 
+		BANK_ACCOUNT, 
+		CREATE_DATE, 
+		DEL_FLAG, 
+		REMARK
+	</sql>
+	
+	
+	<select id="findById" resultMap="rsSupplier" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from T_4S_SUPPLIER
+		<where>
+			ID = #{id}
+		</where>
+	</select>
+	
+	
+	<select id="findList" resultMap="rsSupplier">
+		select  <include refid="sql_column_items"/> from T_4S_SUPPLIER
+		<where>
+		     del_flag=1
+			<if test="Supplier != null and Supplier.id != null ">  
+				and ID = #{Supplier.id}
+			</if>
+			<if test="Supplier != null and Supplier.name != null and Supplier.name != '' ">  
+				and NAME = #{Supplier.name}
+			</if>
+			<if test="Supplier != null and Supplier.contacts != null and Supplier.contacts != '' ">  
+				and CONTACTS = #{Supplier.contacts}
+			</if>
+			<if test="Supplier != null and Supplier.contactTel != null and Supplier.contactTel != '' ">  
+				and CONTACT_TEL = #{Supplier.contactTel}
+			</if>
+			<if test="Supplier != null and Supplier.bankName != null and Supplier.bankName != '' ">  
+				and BANK_NAME = #{Supplier.bankName}
+			</if>
+			<if test="Supplier != null and Supplier.bankAccount != null and Supplier.bankAccount != '' ">  
+				and BANK_ACCOUNT = #{Supplier.bankAccount}
+			</if>
+			<if test="createDateBegin != null" >
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]> 
+			</if>
+			<if test="createDateEnd != null" > 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]> 
+			</if>
+			<if test="Supplier != null and Supplier.delFlag != null ">  
+				and DEL_FLAG = #{Supplier.delFlag}
+			</if>
+			<if test="Supplier != null and Supplier.remark != null and Supplier.remark != '' ">  
+				and REMARK = #{Supplier.remark}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="Supplier">
+		insert into T_4S_SUPPLIER 
+			(
+			ID, 
+			NAME, 
+			CONTACTS, 
+			CONTACT_TEL, 
+			BANK_NAME, 
+			BANK_ACCOUNT, 
+			CREATE_DATE, 
+			DEL_FLAG, 
+			REMARK
+			) 
+		values
+			(
+			SEQ_T_4S_SUPPLIER.nextval, 
+			#{name, jdbcType=VARCHAR}, 
+			#{contacts, jdbcType=VARCHAR}, 
+			#{contactTel, jdbcType=VARCHAR}, 
+			#{bankName, jdbcType=VARCHAR}, 
+			#{bankAccount, jdbcType=VARCHAR}, 
+			sysdate, 
+			1, 
+			#{remark, jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<update id="update" parameterType="Supplier">
+		update T_4S_SUPPLIER
+			 <set> 
+				<if test=" name != null ">NAME = #{name, jdbcType=VARCHAR}, </if>
+				<if test=" contacts != null ">CONTACTS = #{contacts, jdbcType=VARCHAR}, </if>
+				<if test=" contactTel != null ">CONTACT_TEL = #{contactTel, jdbcType=VARCHAR}, </if>
+				<if test=" bankName != null ">BANK_NAME = #{bankName, jdbcType=VARCHAR}, </if>
+				<if test=" bankAccount != null ">BANK_ACCOUNT = #{bankAccount, jdbcType=VARCHAR}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+				<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4S_SUPPLIER
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CustomerMapper">
+	
+	<resultMap id="rsCustomer" type="Customer">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="sex" column="SEX" />
+		<result property="vocation" column="VOCATION" />
+		<result property="workunit" column="WORKUNIT" />
+		<result property="idNo" column="ID_NO" />
+		<result property="contactTel" column="CONTACT_TEL" />
+		<result property="address" column="ADDRESS" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="delFlag" column="DEL_FLAG" />
+		<result property="remark" column="REMARK" />
+	</resultMap>
+	
+	<sql id="sql_column_items">
+		ID, 
+		NAME, 
+		SEX, 
+		VOCATION, 
+		WORKUNIT, 
+		ID_NO, 
+		CONTACT_TEL, 
+		ADDRESS, 
+		CREATE_DATE, 
+		DEL_FLAG, 
+		REMARK
+	</sql>
+	
+	
+	<select id="findById" resultMap="rsCustomer" parameterType="java.lang.Long">
+		select  <include refid="sql_column_items"/> from T_4s_customer
+		<where>
+			ID = #{id}
+		</where>
+	</select>
+	
+	
+	<select id="findList" resultMap="rsCustomer">
+		select  <include refid="sql_column_items"/> from T_4s_customer
+		<where>
+			<if test="Customer != null and Customer.id != null ">  
+				and ID = #{Customer.id}
+			</if>
+			<if test="Customer != null and Customer.name != null and Customer.name != '' ">  
+				and NAME = #{Customer.name}
+			</if>
+			<if test="Customer != null and Customer.sex != null and Customer.sex!=0">  
+				and SEX = #{Customer.sex}
+			</if>
+			<if test="Customer != null and Customer.vocation != null and Customer.vocation != '' ">  
+				and VOCATION = #{Customer.vocation}
+			</if>
+			<if test="Customer != null and Customer.workunit != null and Customer.workunit != '' ">  
+				and WORKUNIT = #{Customer.workunit}
+			</if>
+			<if test="Customer != null and Customer.idNo != null and Customer.idNo != '' ">  
+				and ID_NO = #{Customer.idNo}
+			</if>
+			<if test="Customer != null and Customer.contactTel != null and Customer.contactTel != '' ">  
+				and CONTACT_TEL = #{Customer.contactTel}
+			</if>
+			<if test="Customer != null and Customer.address != null and Customer.address != '' ">  
+				and ADDRESS = #{Customer.address}
+			</if>
+			<if test="createDateBegin != null" >
+				<![CDATA[
+				and CREATE_DATE >= #{createDateBegin} 
+				]]> 
+			</if>
+			<if test="createDateEnd != null" > 
+				<![CDATA[
+				and CREATE_DATE <= #{createDateEnd}
+				]]> 
+			</if>
+			<if test="Customer != null and Customer.delFlag != null ">  
+				and DEL_FLAG = #{Customer.delFlag}
+			</if>
+			<if test="Customer != null and Customer.remark != null and Customer.remark != '' ">  
+				and REMARK = #{Customer.remark}
+			</if>
+		</where>
+		<if test="order != null and order != '' ">  
+			order by ${order} ${sort}
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="Customer">
+		insert into T_4s_customer 
+			(
+			ID, 
+			NAME, 
+			SEX, 
+			VOCATION, 
+			WORKUNIT, 
+			ID_NO, 
+			CONTACT_TEL, 
+			ADDRESS, 
+			CREATE_DATE, 
+			DEL_FLAG, 
+			REMARK
+			) 
+		values
+			(
+			seq_t_4s_customer.nextval, 
+			#{name, jdbcType=VARCHAR}, 
+			#{sex, jdbcType=NUMERIC}, 
+			#{vocation, jdbcType=VARCHAR}, 
+			#{workunit, jdbcType=VARCHAR}, 
+			#{idNo, jdbcType=VARCHAR}, 
+			#{contactTel, jdbcType=VARCHAR}, 
+			#{address, jdbcType=VARCHAR}, 
+			sysdate, 
+			#{delFlag, jdbcType=NUMERIC}, 
+			#{remark, jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<update id="update" parameterType="Customer">
+		update T_4s_customer
+			 <set> 
+				<if test=" name != null ">NAME = #{name, jdbcType=VARCHAR}, </if>
+				<if test=" sex != null ">SEX = #{sex, jdbcType=NUMERIC}, </if>
+				<if test=" vocation != null ">VOCATION = #{vocation, jdbcType=VARCHAR}, </if>
+				<if test=" workunit != null ">WORKUNIT = #{workunit, jdbcType=VARCHAR}, </if>
+				<if test=" idNo != null ">ID_NO = #{idNo, jdbcType=VARCHAR}, </if>
+				<if test=" contactTel != null ">CONTACT_TEL = #{contactTel, jdbcType=VARCHAR}, </if>
+				<if test=" address != null ">ADDRESS = #{address, jdbcType=VARCHAR}, </if>
+				<if test=" createDate != null ">CREATE_DATE = #{createDate, jdbcType=TIMESTAMP}, </if>
+				<if test=" delFlag != null ">DEL_FLAG = #{delFlag, jdbcType=NUMERIC}, </if>
+				<if test=" remark != null ">REMARK = #{remark, jdbcType=VARCHAR}, </if>
+				ID = #{id}
+			<where>
+				ID = #{id}
+			</where>
+		</set>
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from T_4s_customer
+		<where>
+			ID = #{id}
+		</where>
+	</delete>
+	
+</mapper>
