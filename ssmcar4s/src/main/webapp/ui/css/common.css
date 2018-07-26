@@ -1,39 +1,71 @@
 @CHARSET "UTF-8";
 /*列表页面样式  */
-#div_list{
-	font-family:华文中宋;
+#div_list {
+	font-family: 华文中宋;
 }
-.fset{
-	 border-radius:10px;/*边框圆角*/
+
+.fset {
+	border-radius: 10px; /*边框圆角*/
 }
-#div_list table th{
+
+#div_list table th {
 	background-color: #98D0B9;
-	
 }
-#td_list{
+
+#td_list {
 	text-align: center;
 	width: 100%;
 	border: 1px solid;
 }
 /*td边框设置*/
-#td_list td{
-	border: 1px solid;	
+#td_list td {
+	border: 1px solid;
 }
 /*td边框设置*/
-#td_list th{
-	border: 1px solid;	
+#td_list th {
+	border: 1px solid;
 }
-#td_list th span{
+
+#td_list th span {
 	font-size: 0px;
 }
-.tr0{ background:#ECECEC; box-shadow:none; text-shadow:none;border:none;height:27px; line-height:26px; font-size:14px; font-family:"microsoft yahei";}
-.tr0:hover{ background:#333; color:#fff;}
-.tr1{ background:#ECECEC; box-shadow:none; text-shadow:none;border:none;height:27px; line-height:26px; font-size:14px; font-family:"microsoft yahei";}
-.tr1:hover{ background:#333; color:#fff;}
-/*取出下划线*/
-a{
- text-decoration: none;	
+
+.tr0 {
+	background: #ECECEC;
+	box-shadow: none;
+	text-shadow: none;
+	border: none;
+	height: 27px;
+	line-height: 26px;
+	font-size: 14px;
+	font-family: "microsoft yahei";
 }
-.ipt{
+
+.tr0:hover {
+	background: #333;
+	color: #fff;
+}
+
+.tr1 {
+	background: #ECECEC;
+	box-shadow: none;
+	text-shadow: none;
+	border: none;
+	height: 27px;
+	line-height: 26px;
+	font-size: 14px;
+	font-family: "microsoft yahei";
+}
+
+.tr1:hover {
+	background: #333;
+	color: #fff;
+}
+/*取出下划线*/
+a {
+	text-decoration: none;
+}
+
+.ipt {
 	width: 174px;
 }
